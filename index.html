@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Happy Birthday 🎂</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;800&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root{--tx:0;--ty:0;--gold:#e6c25a;--red:#e01b2b;--silver:#c9ccd6;--bg:#040406}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:#fff;font-family:Inter,system-ui,sans-serif;overflow-x:hidden}
+canvas#gl{position:fixed;inset:0;width:100%;height:100%;z-index:0}
+canvas#fx{position:fixed;inset:0;width:100%;height:100%;z-index:50;pointer-events:none}
+#bar{position:fixed;top:0;left:0;height:3px;width:0;z-index:60;background:linear-gradient(90deg,var(--red),var(--gold),#fff)}
+nav{position:fixed;top:calc(14px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);z-index:40;padding:10px 22px;border-radius:99px;font-size:12px;letter-spacing:.25em;text-transform:uppercase;white-space:nowrap;background:rgba(255,255,255,.06);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.14)}
+nav b{color:var(--gold);font-weight:600}
+main{position:relative;z-index:10}
+section{min-height:100vh;min-height:100svh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:90px 22px}
+.gold{background:linear-gradient(110deg,#8a6a1c,#f7e08a 30%,#fff 50%,#e6c25a 70%,#8a6a1c);background-size:200% auto;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shine 5s linear infinite}
+@keyframes shine{to{background-position:200% center}}
+h1,h2{font-family:'Playfair Display',Georgia,serif;font-weight:800;line-height:1.05}
+h1{font-size:clamp(46px,12vw,120px);transform:translate3d(calc(var(--tx)*-18px),calc(var(--ty)*-12px),0)}
+h1 span{display:block;color:var(--silver);font-size:.55em;font-weight:600;text-shadow:0 0 40px rgba(224,27,43,.7)}
+h2{font-size:clamp(32px,7vw,64px);margin-bottom:18px}
+.tag{font-size:12px;letter-spacing:.4em;text-transform:uppercase;color:var(--silver);margin-bottom:22px}
+p.lead{max-width:560px;font-weight:300;line-height:1.8;color:#e8e8ee;font-size:clamp(15px,3.6vw,19px)}
+.btns{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:34px}
+button{font:600 14px Inter,sans-serif;letter-spacing:.08em;padding:14px 26px;border-radius:99px;cursor:pointer;color:#fff;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.07);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);transition:.3s}
+button.p{background:linear-gradient(135deg,var(--red),#7a0812);border-color:var(--gold);box-shadow:0 0 30px rgba(224,27,43,.5)}
+button:active{transform:scale(.95)}
+.glass{position:relative;border-radius:22px;background:rgba(255,255,255,.05);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.13);overflow:hidden;transform:perspective(900px) rotateX(calc(var(--rx,0deg) + var(--ty)*-7deg)) rotateY(calc(var(--ry,0deg) + var(--tx)*9deg));transition:transform .25s ease-out}
+.glass::after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(260px circle at var(--mx,50%) var(--my,0%),rgba(230,194,90,.22),transparent 60%)}
+.msg{padding:34px 28px;max-width:600px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;width:100%;max-width:980px;margin-top:30px}
+.ph{aspect-ratio:3/4;display:flex;align-items:flex-end;background-size:cover;background-position:center}
+.ph.empty{align-items:center;justify-content:center;color:var(--silver);font-size:13px;letter-spacing:.15em;border-style:dashed}
+.ph small{width:100%;padding:26px 12px 12px;font-size:13px;background:linear-gradient(transparent,rgba(0,0,0,.85));text-align:left;z-index:2}
+.wishes{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;max-width:900px;width:100%;margin-top:26px}
+.wishes .glass{padding:26px 20px;text-align:left}
+.wishes i{font-style:normal;color:var(--gold);font-size:12px;letter-spacing:.3em}
+.wishes p{margin-top:10px;line-height:1.7;font-weight:300}
+.rv{opacity:0;transform:translateY(50px) scale(.96);transition:opacity 1s,transform 1s cubic-bezier(.2,.8,.2,1)}
+.rv.in{opacity:1;transform:none}
+.d1{transition-delay:.12s}.d2{transition-delay:.24s}.d3{transition-delay:.36s}
+footer{position:relative;z-index:10;text-align:center;padding:30px;font-size:12px;letter-spacing:.3em;color:var(--silver)}
+</style>
+</head>
+<body>
+<div id="bar"></div>
+<canvas id="gl"></canvas><canvas id="fx"></canvas>
+<nav>✦ Happy Birthday, <b id="nn"></b></nav>
+
+<main>
+  <section id="s0">
+    <div class="tag rv">30 · 09 · 2026</div>
+    <h1 class="rv d1"><span>Happy Birthday</span><em class="gold" id="hn" style="font-style:normal"></em></h1>
+    <p class="lead rv d2" style="margin-top:22px" id="sub"></p>
+    <div class="btns rv d3">
+      <button class="p" id="party">🎉 Tap to celebrate</button>
+      <button id="gyro" style="display:none">📱 Enable tilt</button>
+    </div>
+  </section>
+
+  <section id="s1">
+    <div class="tag rv">A message for you</div>
+    <div class="glass msg rv d1 tilt">
+      <h2 class="gold">Legends don't age</h2>
+      <p class="lead" id="msg" style="margin:auto"></p>
+    </div>
+  </section>
+
+  <section id="s2">
+    <div class="tag rv">Today's moments</div>
+    <h2 class="gold rv d1">Captured forever</h2>
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <section id="s3">
+    <div class="tag rv">Wishes</div>
+    <h2 class="gold rv d1">What I wish for you</h2>
+    <div class="wishes" id="wishes"></div>
+  </section>
+
+  <section id="s4">
+    <h2 class="gold rv" style="font-size:clamp(40px,10vw,96px)">Many Happy<br>Returns</h2>
+    <p class="lead rv d1" style="margin-top:16px" id="from"></p>
+    <div class="btns rv d2"><button class="p" id="party2">❤ Celebrate again</button></div>
+  </section>
+</main>
+<footer>MADE WITH ♥ FOR <span id="fn"></span></footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+/* ============ EDIT THIS PART ============ */
+const CFG = {
+  name: "FRIEND NAME",          // your friend's name
+  from: "Rishendra",            // your name
+  sub: "Another year of being awesome. This one's for you.",
+  msg: "Write your heartfelt message here. Talk about your memories, the fun times, and what this friendship means to you.",
+  photos: [                     // put your pictures inside a folder called "photos"
+    {src:"photos/1.jpg", cap:"Caption 1"},
+    {src:"photos/2.jpg", cap:"Caption 2"},
+    {src:"photos/3.jpg", cap:"Caption 3"},
+    {src:"photos/4.jpg", cap:"Caption 4"},
+    {src:"photos/5.jpg", cap:"Caption 5"},
+    {src:"photos/6.jpg", cap:"Caption 6"}
+  ],
+  wishes: ["May every goal you chase turn into a win.","Stay the same crazy, loyal friend you are.","Health, wealth, and endless memories ahead."]
+};
+/* ========================================= */
+const $=id=>document.getElementById(id);
+['nn','hn','fn'].forEach(i=>$(i).textContent=CFG.name);
+$('sub').textContent=CFG.sub; $('msg').textContent=CFG.msg;
+$('from').textContent="With love, "+CFG.from;
+CFG.photos.forEach((p,i)=>{
+  const d=document.createElement('div');
+  d.className='glass ph empty rv tilt d'+(i%3+1);
+  d.textContent='PHOTO '+(i+1);
+  const im=new Image();
+  im.onload=()=>{d.className='glass ph rv tilt in d'+(i%3+1);d.textContent='';d.style.backgroundImage='url("'+p.src+'")';d.innerHTML='<small>'+p.cap+'</small>';io.observe(d)};
+  im.src=p.src; $('grid').appendChild(d);
+});
+CFG.wishes.forEach((w,i)=>{
+  const d=document.createElement('div');d.className='glass rv tilt d'+(i+1);
+  d.innerHTML='<i>WISH 0'+(i+1)+'</i><p>'+w+'</p>';$('wishes').appendChild(d);
+});
+
+/* scroll reveal */
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in')}),{threshold:.15});
+document.querySelectorAll('.rv').forEach(e=>io.observe(e));
+
+/* card pointer tilt + glow */
+document.addEventListener('pointermove',e=>{
+  const c=e.target.closest&&e.target.closest('.tilt');
+  document.querySelectorAll('.tilt').forEach(t=>{if(t!==c){t.style.setProperty('--rx','0deg');t.style.setProperty('--ry','0deg')}});
+  if(!c)return;
+  const r=c.getBoundingClientRect(),x=(e.clientX-r.left)/r.width,y=(e.clientY-r.top)/r.height;
+  c.style.setProperty('--ry',((x-.5)*16)+'deg');c.style.setProperty('--rx',((.5-y)*16)+'deg');
+  c.style.setProperty('--mx',x*100+'%');c.style.setProperty('--my',y*100+'%');
+});
+
+/* tilt: mouse + gyroscope */
+let ttx=0,tty=0,tx=0,ty=0;
+addEventListener('mousemove',e=>{ttx=e.clientX/innerWidth*2-1;tty=e.clientY/innerHeight*2-1});
+function onOri(e){if(e.gamma==null)return;ttx=Math.max(-1,Math.min(1,e.gamma/30));tty=Math.max(-1,Math.min(1,((e.beta||0)-50)/30))}
+const needPerm=window.DeviceOrientationEvent&&typeof DeviceOrientationEvent.requestPermission==='function';
+if(window.DeviceOrientationEvent){
+  if(needPerm){$('gyro').style.display='';$('gyro').onclick=async()=>{try{if(await DeviceOrientationEvent.requestPermission()==='granted'){addEventListener('deviceorientation',onOri);$('gyro').style.display='none'}}catch(_){}}}
+  else addEventListener('deviceorientation',onOri);
+}
+
+/* ---------- WebGL particles ---------- */
+const N=innerWidth<700?4500:8000,R=Math.random,PI2=Math.PI*2;
+const gens=[
+ i=>{const a=R()*PI2,r=2.7+(R()-.5)*.5+(R()<.15?R()*.8:0);return[Math.cos(a)*r,Math.sin(a)*r,(R()-.5)*.6]},
+ i=>{const t=R()*2-1,a=t*9+(i%2)*Math.PI,r=1+(R()-.5)*.5;return[Math.cos(a)*r,t*4.2,Math.sin(a)*r]},
+ i=>{const x=(R()-.5)*11,z=(R()-.5)*7;return[x,Math.sin(x*1.1+z*.8)*.7+(R()-.5)*.15-.3,z]},
+ i=>{const r=Math.pow(R(),.6)*4.2,a=r*1.5+(i%3)*2.094+(R()-.5)*.5;return[Math.cos(a)*r,(R()-.5)*.4,Math.sin(a)*r]},
+ i=>{const t=R()*PI2,s=R()<.3?Math.sqrt(R()):1-R()*.08,x=16*Math.pow(Math.sin(t),3),y=13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t);return[x*.17*s,y*.17*s+.3,(R()-.5)*1.2*s]}
+];
+const shapes=gens.map(g=>{const a=new Float32Array(N*3);for(let i=0;i<N;i++){const p=g(i);a.set(p,i*3)}return a});
+const renderer=new THREE.WebGLRenderer({canvas:$('gl'),antialias:false,alpha:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+const scene=new THREE.Scene(),cam=new THREE.PerspectiveCamera(55,1,.1,100);
+const group=new THREE.Group();scene.add(group);
+const pal=[0xe6c25a,0xe6c25a,0xe6c25a,0xe01b2b,0xe01b2b,0xffffff,0xc9ccd6,0xc9ccd6].map(c=>new THREE.Color(c));
+const col=new Float32Array(N*3);
+for(let i=0;i<N;i++){const c=pal[(R()*pal.length)|0];col.set([c.r,c.g,c.b],i*3)}
+const geo=new THREE.BufferGeometry();
+geo.setAttribute('position',new THREE.BufferAttribute(new Float32Array(shapes[0]),3));
+geo.setAttribute('color',new THREE.BufferAttribute(col,3));
+const cv=document.createElement('canvas');cv.width=cv.height=64;
+const cx=cv.getContext('2d'),gr=cx.createRadialGradient(32,32,0,32,32,32);
+gr.addColorStop(0,'#fff');gr.addColorStop(.3,'rgba(255,255,255,.6)');gr.addColorStop(1,'rgba(255,255,255,0)');
+cx.fillStyle=gr;cx.fillRect(0,0,64,64);
+const pts=new THREE.Points(geo,new THREE.PointsMaterial({size:.06,map:new THREE.CanvasTexture(cv),vertexColors:true,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending}));
+group.add(pts);
+/* stars */
+const sg=new THREE.BufferGeometry(),sp_=new Float32Array(900*3);
+for(let i=0;i<900*3;i++)sp_[i]=(R()-.5)*60;
+sg.setAttribute('position',new THREE.BufferAttribute(sp_,3));
+const stars=new THREE.Points(sg,new THREE.PointsMaterial({size:.08,color:0xffffff,transparent:true,opacity:.6,depthWrite:false,map:pts.material.map}));
+scene.add(stars);
+
+function resize(){renderer.setSize(innerWidth,innerHeight,false);cam.aspect=innerWidth/innerHeight;cam.position.z=innerWidth<innerHeight?12.5:8.5;cam.updateProjectionMatrix()}
+addEventListener('resize',resize);resize();
+
+let target=0,sp=0;
+function onScroll(){const m=document.documentElement.scrollHeight-innerHeight;target=m>0?scrollY/m:0;$('bar').style.width=target*100+'%'}
+addEventListener('scroll',onScroll,{passive:true});onScroll();
+
+const pos=geo.attributes.position.array,L=shapes.length-1;
+function tick(t){
+  requestAnimationFrame(tick);
+  sp+=(target-sp)*.06;tx+=(ttx-tx)*.06;ty+=(tty-ty)*.06;
+  const f=sp*L,i=Math.min(Math.floor(f),L-1),s=f-i,e=s*s*(3-2*s),A=shapes[i],B=shapes[i+1];
+  for(let k=0;k<N*3;k++)pos[k]+=(A[k]+(B[k]-A[k])*e-pos[k])*.08;
+  geo.attributes.position.needsUpdate=true;
+  group.rotation.y=t*.00025+tx*.7;
+  group.rotation.x=.3+ty*.35;
+  group.position.y=-sp*.4;
+  group.scale.setScalar(1+Math.sin(t*.0015)*.025);
+  stars.rotation.y=t*.00003+tx*.1;stars.rotation.x=ty*.05+sp*.6;
+  const r=document.documentElement.style;r.setProperty('--tx',tx.toFixed(3));r.setProperty('--ty',ty.toFixed(3));
+  renderer.render(scene,cam);
+  drawFx();
+}
+requestAnimationFrame(tick);
+
+/* ---------- confetti ---------- */
+const fx=$('fx'),fc=fx.getContext('2d');let bits=[];
+function fxSize(){fx.width=innerWidth;fx.height=innerHeight}addEventListener('resize',fxSize);fxSize();
+const cols=['#e6c25a','#e01b2b','#ffffff','#c9ccd6','#f7e08a'];
+function boom(){
+  for(let i=0;i<160;i++)bits.push({x:innerWidth/2,y:innerHeight*.55,vx:(R()-.5)*16,vy:-R()*17-4,w:5+R()*7,h:3+R()*5,r:R()*6,vr:(R()-.5)*.4,c:cols[(R()*5)|0],life:1});
+  if(navigator.vibrate)navigator.vibrate(60);
+}
+function drawFx(){
+  fc.clearRect(0,0,fx.width,fx.height);
+  bits=bits.filter(b=>b.life>0&&b.y<innerHeight+30);
+  bits.forEach(b=>{b.vy+=.35;b.vx*=.99;b.x+=b.vx;b.y+=b.vy;b.r+=b.vr;b.life-=.004;
+    fc.save();fc.globalAlpha=Math.max(b.life,0);fc.translate(b.x,b.y);fc.rotate(b.r);fc.fillStyle=b.c;fc.fillRect(-b.w/2,-b.h/2,b.w,b.h);fc.restore()});
+}
+$('party').onclick=$('party2').onclick=boom;
+setTimeout(boom,900);
+</script>
+</body>
+</html>
